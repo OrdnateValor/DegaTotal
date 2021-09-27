@@ -1,0 +1,5 @@
+package mini.dto;
+
+public class Comment {
+
+}

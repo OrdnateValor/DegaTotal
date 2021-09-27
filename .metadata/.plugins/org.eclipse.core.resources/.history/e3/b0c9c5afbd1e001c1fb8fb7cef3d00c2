@@ -1,0 +1,372 @@
+package mini.controller;
+
+import java.io.IOException;
+//Servlet
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+//DAO
+import mini.dao.CommentDAO;
+import mini.dao.ItemDAO;
+import mini.dao.MemberDAO;
+import mini.dao.PostDAO;
+//DTO
+import mini.dto.Comment;
+import mini.dto.Item;
+import mini.dto.Member;
+import mini.dto.Post;
+
+/**
+ * Servlet implementation class ItemController
+ */
+@WebServlet("*.do")
+public class MiniController extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	private HttpSession session;
+	private ItemDAO idao;
+	private MemberDAO mdao;
+	private CommentDAO cdao;
+	private PostDAO pdao;
+
+	private String url;
+	private boolean result;
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doPost(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8"); // 한글 처리
+		response.setContentType("text/html; charset=UTF-8");
+
+		session = request.getSession();
+		String requestURI = request.getRequestURI();
+		// System.out.println("requestURI:" + requestURI);
+		String contextPath = request.getContextPath();
+		String cmd = requestURI.substring(contextPath.length());
+		idao = new ItemDAO();
+		mdao = new MemberDAO();
+		cdao = new CommentDAO();
+		pdao = new PostDAO();
+
+		switch (cmd) {
+		case "/itemList.do":
+			itemList(request);
+			break;
+		case "/itemInfo.do":
+			itemInfo(request);
+			cmtList(request);
+			break;
+		case "/itemAdd.do":
+			itemAdd(request);
+			break;
+		case "/itemInsert.do":
+			itemInsert(request);
+			response.sendRedirect(url);
+			return;
+		case "/itemMod.do":
+			itemMod(request);
+			break;
+		case "/itemUpdate.do":
+			itemUpdate(request);
+			response.sendRedirect(url);
+			return;
+		case "/itemDel.do":
+			itemDel(request);
+			response.sendRedirect(url);
+			return;
+		case "/addCmt.do":
+			addCmt(request);
+			response.sendRedirect(url);
+			return;
+		case "/delCmt.do":
+			delCmt(request);
+			response.sendRedirect(url);
+			return;
+		case "/postList.do":
+			postList(request);
+			break;
+		case "/postWrite.do":
+			postWrite(request);
+			break;
+		case "/addPost.do":
+			addPost(request);
+			response.sendRedirect(url);
+			return;
+		case "/postView.do":
+			postView(request);
+			break;
+		case "/postMod.do":
+			postMod(request);
+			break;
+		case "/postUpdate.do":
+			postUadate(request);
+			response.sendRedirect(url);
+			return;
+		case "/postDel.do":
+			postDel(request);
+			response.sendRedirect(url);
+			return;
+		}
+
+		RequestDispatcher rd = request.getRequestDispatcher(url);
+		rd.forward(request, response);
+	}
+
+	private void postDel(HttpServletRequest request) {
+		int postId = Integer.parseInt(request.getParameter("postId"));
+		String admin = (String) session.getAttribute("Admin");// 권한확인용
+
+		if (admin.equals("false")) {
+			session.setAttribute("msg", "권한이 없습니다.");
+		} else {
+			System.out.println("postId : " + postId);
+			result = pdao.delPost(postId);
+			// System.out.println("result : " + result);
+			if (result) {// 성공 시,
+				session.setAttribute("msg", "게시물 삭제 성공");
+			} else {
+				session.setAttribute("msg", "게시물 삭제 실패");
+			}
+			url = "/postList.do";
+		}
+	}
+
+	private void postUadate(HttpServletRequest request) {
+		Post post = new Post(request);
+		result = pdao.updatePost(post);
+		if (result) {// 성공 시
+			session.setAttribute("msg", "게시글 업데이트");
+		} else {
+			session.setAttribute("msg", "게시글 실패");
+		}
+		url = "/postList.do";
+	}
+
+	// 게시물 수정
+	private void postMod(HttpServletRequest request) {
+		Post temp = null;
+		int postId = Integer.parseInt(request.getParameter("postId"));
+		String admin = (String) session.getAttribute("Admin");
+		if (admin.equals("true")) {// 권한 확인
+			temp = pdao.selectPost(postId);
+			//System.out.println("postId : " + temp.getPostId());
+			System.out.println("postSub : " + temp.getPostSub());
+			System.out.println("postThumb : " + temp.getPostThumb());
+			System.out.println("content : " + temp.getContent());
+			request.setAttribute("post", temp);
+			url = "/_post/postMod.jsp?postId=" + postId;
+		} else { // 권한 없을 시, 돌려보냄
+			session.setAttribute("msg", "권한이 없습니다.");
+			url = "/postList.do";
+		}
+	}
+
+	// 상세보기
+	private void postView(HttpServletRequest request) {
+		Post temp = new Post(); // temp 객체 생성
+		int postId = Integer.parseInt(request.getParameter("postId"));
+
+		temp = pdao.selectPost(postId);
+
+		if (temp != null) {
+			request.setAttribute("post", temp);
+			url = "/_post/postView.jsp?postId=" + postId;
+		} else {
+			session.setAttribute("msg", "잘못된 게시물 접근입니다.");
+			url = "/postList.do";
+		}
+	}
+
+	// 목록
+	private void postList(HttpServletRequest request) {
+		request.setAttribute("postList", pdao.selectPostList());
+		url = "/_post/postList.jsp";
+	}
+
+	// 게시물 작성
+	private void postWrite(HttpServletRequest request) {
+		String admin = (String) session.getAttribute("Admin");
+		if (admin.equals("true")) {// 권한 확인
+			url = "/_post/postWrite.jsp";
+		} else {
+			session.setAttribute("msg", "권한이 없습니다.");
+			url = "/postList.do";
+		}
+	}
+
+	// 게시물 추가 처리
+	private void addPost(HttpServletRequest request) {
+		Post post = new Post(request);
+		result = pdao.addPost(post);
+		if (result) {// 성공시
+			session.setAttribute("msg", "게시물 등록 성공");
+		} else {
+			session.setAttribute("msg", "게시물 등록 실패");
+		}
+		url = "/postList.do";
+	}
+
+	// 댓글 리스트 출력
+	private void cmtList(HttpServletRequest request) {
+		String postId = request.getParameter("itemId");
+		request.setAttribute("totalCmt", cdao.selectTotalCmt(postId));
+		if (cdao.cmtList(postId) != null) {
+			request.setAttribute("cmtList", cdao.cmtList(postId));
+		} else {
+			session.setAttribute("cmtLoadErr", "댓글 목록을 불러올 수 없었습니다.");
+		}
+	}
+
+	// 댓글 삭제 처리
+	private void delCmt(HttpServletRequest request) {
+		// System.out.println("cmtNum : "+request.getParameter("cmtNum"));
+		// System.out.println("itemId : "+request.getParameter("itemId"));
+		int cmtNum = 0;
+		if (request.getParameter("cmtNum") != "") {
+			cmtNum = Integer.parseInt(request.getParameter("cmtNum"));
+		}
+		result = cdao.delCmt(cmtNum);
+		if (result) { // 결과값이 참일 때
+			session.setAttribute("msg", "댓글 삭제 성공");
+		} else {
+			session.setAttribute("msg", "댓글 삭제 실패");
+		}
+		url = "/itemInfo.do?itemId=" + request.getParameter("itemId");
+	}
+
+	// 댓글 추가
+	private void addCmt(HttpServletRequest request) {
+		Comment cmt = new Comment(request);
+		result = cdao.addCmt(cmt);
+		if (!result) { // 결과값이 실패일 때
+			session.setAttribute("msg", "댓글 등록 실패");
+		} else {
+			// session.setAttribute("msg", "댓글 등록 성공");
+		}
+		url = "/itemInfo.do?itemId=" + cmt.getPostId();
+	}
+
+	// 아이템 등록
+	private void itemInsert(HttpServletRequest request) {
+		Item item = new Item();
+		item.ItemInsert(request);
+		result = idao.addItem(item);
+		if (result) {
+			session.setAttribute("msg", "아이템 등록 성공");
+		} else {
+			session.setAttribute("msg", "아이템 등록 실패");
+		}
+		url = "/itemList.do";
+	}
+
+	// 아이템 작성 폼
+	private void itemAdd(HttpServletRequest request) {
+		String admin = (String) session.getAttribute("Admin");// 권한확인용
+
+		if (admin.equals("false")) {
+			System.out.println("admin : " + admin);
+			session.setAttribute("msg", "권한이 없습니다.");
+			url = "/itemList.do";
+		} else { // 권한 있을 시 넘어감
+			url = "/itemInfo/itemAdd.jsp";
+		}
+	}
+
+	// 아이템 수정 처리
+	private void itemUpdate(HttpServletRequest request) {
+		Item item = new Item(request);
+		result = idao.updateItem(item);
+		if (result) {// 성공 시
+			session.setAttribute("msg", "아이템 정보 업데이트");
+		} else {
+			session.setAttribute("msg", "정보 업데이트 실패");
+		}
+		url = "/itemList.do";
+	}
+
+	// 아이템 수정폼
+	private void itemMod(HttpServletRequest request) {
+		Item item = null;
+		String admin = (String) session.getAttribute("Admin");// 권한확인용
+		if (admin.equals("false")) {
+			session.setAttribute("msg", "권한이 없습니다.");
+		} else { // 권한 있을 시 넘어감
+			item = idao.selectItem(request.getParameter("itemId"));
+			request.setAttribute("item", item);
+			url = "/itemInfo/itemMod.jsp?itemId=" + request.getParameter("itemId");
+		}
+	}
+
+	// 아이템 삭제
+	private void itemDel(HttpServletRequest request) {
+		String itemId = null;
+		String admin = (String) session.getAttribute("Admin");// 권한확인용
+
+		if (admin.equals("false")) {
+			session.setAttribute("msg", "권한이 없습니다.");
+		} else {
+			itemId = request.getParameter("itemId");
+			// System.out.println("itemId : " + request.getParameter("itemId"));
+			result = idao.delItem(itemId);
+			// System.out.println("result : " + result);
+			if (result) {// 성공 시,
+				session.setAttribute("msg", "아이템 정보 삭제 성공");
+			} else {
+				session.setAttribute("msg", "아이템 정보 삭제 실패");
+			}
+		}
+		url = "/itemList.do";
+		System.out.println("msg : " + session.getAttribute("msg"));
+		System.out.println("===================================");
+	}
+
+	// 아이템 상세보기
+	private void itemInfo(HttpServletRequest request) {
+		Item item = null;
+		String itemId = request.getParameter("itemId");
+
+		// 아이템 받아오기
+		item = idao.selectItem(itemId);
+		// System.out.println("totalCmt : "+ cdao.selectTotalCmt(itemId));
+		// 저장된 데이터 페이지 송부
+		if (item != null) { // 정상적으로 아이템 확인
+			request.setAttribute("item", item);
+			url = "/itemInfo/itemDetails.jsp?";
+		} else {// 에러
+			session.setAttribute("msg", "잘못된 아이템 정보입니다.");
+			url = "/itemList.do";
+
+		}
+	}
+
+	private void itemList(HttpServletRequest request) {// 아이템 목록
+		String sid = (String) session.getAttribute("sid");
+		boolean prop = false;
+		if (sid != null) {
+			// System.out.println("sid : " + sid);
+			Member smem = mdao.getUserById(sid);
+			prop = smem.isProperties(); // 관리자 권한 확인하기
+		}
+		/*
+		 * //디버깅용 코드 System.out.println("prop : " + prop); List<Item> iList =
+		 * idao.selectItemList(); if(iList != null) {
+		 * System.out.println("iList is not null"); }else {
+		 * System.out.println("iList is null"); }
+		 */
+
+		request.setAttribute("itemList", idao.selectItemList()); // 아이템 리스트 가져오기
+		if (prop) {
+			url = "/itemInfo/itemList.jsp?admin=1";
+		} else {
+			url = "/itemInfo/itemList.jsp";
+		}
+	}
+}

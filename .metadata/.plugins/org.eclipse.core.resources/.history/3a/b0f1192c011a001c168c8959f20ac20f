@@ -1,0 +1,10 @@
+package mini.dto;
+
+import java.io.Serializable;
+
+public class Member implements Serializable {
+
+	/* default serial Version ID */
+	private static final long serialVersionUID = 1L;
+
+}

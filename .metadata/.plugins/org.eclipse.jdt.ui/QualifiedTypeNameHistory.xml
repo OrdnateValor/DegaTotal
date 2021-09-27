@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="java.lang.String"/>
+    <fullyQualifiedTypeName name="mini.dao.ItemDAO"/>
+    <fullyQualifiedTypeName name="mini.dao.MemberDAO"/>
+    <fullyQualifiedTypeName name="mini.dto.Member"/>
+    <fullyQualifiedTypeName name="mini.dto.Item"/>
+    <fullyQualifiedTypeName name="java.util.Iterator"/>
+    <fullyQualifiedTypeName name="java.sql.Statement"/>
+    <fullyQualifiedTypeName name="java.sql.PreparedStatement"/>
+    <fullyQualifiedTypeName name="java.sql.ResultSet"/>
+    <fullyQualifiedTypeName name="mini.dao.CommentDAO"/>
+    <fullyQualifiedTypeName name="java.lang.ClassNotFoundException"/>
+    <fullyQualifiedTypeName name="mini.dto.Comment"/>
+    <fullyQualifiedTypeName name="java.util.Set"/>
+    <fullyQualifiedTypeName name="javax.security.auth.message.callback.PrivateKeyCallback.Request"/>
+    <fullyQualifiedTypeName name="javax.servlet.http.HttpServletRequest"/>
+    <fullyQualifiedTypeName name="java.util.Date"/>
+    <fullyQualifiedTypeName name="java.util.ArrayList"/>
+    <fullyQualifiedTypeName name="java.sql.SQLException"/>
+    <fullyQualifiedTypeName name="mini.util.DBcon"/>
+    <fullyQualifiedTypeName name="mini.dao.PostDAO"/>
+    <fullyQualifiedTypeName name="mini.dto.Post"/>
+    <fullyQualifiedTypeName name="java.sql.Clob"/>
+    <fullyQualifiedTypeName name="java.io.Reader"/>
+</qualifiedTypeNameHistroy>

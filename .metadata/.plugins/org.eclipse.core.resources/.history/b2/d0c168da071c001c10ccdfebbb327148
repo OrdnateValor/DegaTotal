@@ -1,0 +1,324 @@
+package mini.dao;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+import mini.dto.Item;
+import mini.util.DBcon;
+
+//DB 테이블 : item_info
+public class ItemDAO {
+	// 멤버 변수
+	private String query; // 쿼리문을 담을 변수
+	private Statement stmt;
+	private PreparedStatement pstmt;
+	private ResultSet rs; // DQL 반환할 ResultSet
+	private boolean result;
+
+	// 전체 아이템 목록 아이콘과 이름만
+	public List<Item> selectItemList() {
+		query = "SELECT itemId, itemNm, itemIco, itemDes FROM item_info";
+		List<Item> tempList = new ArrayList<Item>();
+		// 임시로 실행 결과를 담을 Item를 List로 생성.
+
+		try {
+			pstmt = DBcon.getConnection().prepareStatement(query);
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				Item temp = new Item();// 반복문으로 Item를 하나씩 생성
+
+				temp.setItemId(rs.getString("itemId"));
+				temp.setItemNm(rs.getString("itemNm"));
+				temp.setItemIco(rs.getString("itemIco"));
+				temp.setItemDes(rs.getString("itemDes"));
+
+				tempList.add(temp);// 생성된 아이템들을 List에 추가.
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBcon.close(rs, stmt);
+		}
+		return tempList;
+	}
+
+	// 추천 비추천
+	public int selectGood(String itemId) {
+		query = "SELECT Good FROM item_info WHERE itemId=?";
+
+		int good = 0;
+		try {
+			pstmt = DBcon.getConnection().prepareStatement(query);
+
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				good = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBcon.close(rs, stmt);
+		}
+		return good;
+	}
+
+	public int selectBad(String itemId) {
+		query = "SELECT Bad FROM item_info WHERE itemId=?";
+
+		int bad = 0;
+		try {
+			pstmt = DBcon.getConnection().prepareStatement(query);
+
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				bad = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBcon.close(rs, stmt);
+		}
+		return bad;
+	}
+
+	// 추천, 비추천 증가
+	public void updateGood(String itemId) {
+		query = "UPDATE item_info SET good = good + 1 WHERE itemId = ?";
+
+		try {
+			pstmt = DBcon.getConnection().prepareStatement(query);
+			pstmt.setString(1, itemId);
+
+			// 따라서, executeUpdate 시에는 query를 따로 안받아도 된다.
+			if (pstmt.executeUpdate() == 1) {
+				// 쿼리 실행 성공 시 true
+				result = true;
+			} // 그 외에는 default인 false로.
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBcon.close(pstmt);
+		}
+	}
+
+	// 아이템 등록
+	public boolean addItem(Item i) {// 게시물 등록
+
+		query = "INSERT INTO item_info VALUES('I' || item_info_seq.NEXTVAL," + " ?, ?, ?, ?, ?, " // itemNm, itemScr,
+																									// itemIco, itemDes,
+																									// iRarity
+				+ " ?, ?, ?, ?, ?, " // iCategory, iSlot, perkIco1, perkName1, perkDes1
+				+ " ?, ?, ?, ?, ?, " // perkIco2, perkName2, perkDes2, perkIco3, perkName3
+				+ " ?, ?, ?, ?, ?, " // perkDes3, perkIco4, perkName4, perkDes4, perkIco5
+				+ " ?, ?, ?, ?, ?, " // perkName5, perkDes5, RPM, MAGAZINE, STAT1NM
+				+ " ?, ?, ?, ?, ?, " // STAT1FIG, STAT2NM, STAT2FIG, STAT3NM, STAT3FIG
+				+ " ?, ?, ?, ?, " // STAT4NM, STAT4FIG, STAT5NM, STAT5FIG
+				+ " DEFAULT, DEFAULT, DEFAULT)"; // REGDATE, GOOD, BAD
+
+		try {
+			pstmt = DBcon.getConnection().prepareStatement(query);
+			pstmt.setString(1, i.getItemNm());
+			pstmt.setString(2, i.getItemScr());
+			pstmt.setString(3, i.getItemIco());
+			pstmt.setString(4, i.getItemDes());
+			pstmt.setString(5, i.getiRarity());
+			pstmt.setString(6, i.getiCategory());
+			pstmt.setString(7, i.getiSlot());
+			//////
+			pstmt.setString(8, i.getPerkIco1());
+			pstmt.setString(9, i.getPerkName1());
+			pstmt.setString(10, i.getPerkDes1());
+			pstmt.setString(11, i.getPerkIco2());
+			pstmt.setString(12, i.getPerkName2());
+			pstmt.setString(13, i.getPerkDes2());
+			pstmt.setString(14, i.getPerkIco3());
+			pstmt.setString(15, i.getPerkName3());
+			pstmt.setString(16, i.getPerkDes3());
+			pstmt.setString(17, i.getPerkIco4());
+			pstmt.setString(18, i.getPerkName4());
+			pstmt.setString(19, i.getPerkDes4());
+			pstmt.setString(20, i.getPerkIco5());
+			pstmt.setString(21, i.getPerkName5());
+			pstmt.setString(22, i.getPerkDes5());
+			/////
+			pstmt.setInt(23, i.getRPM());
+			pstmt.setInt(24, i.getMAGAZINE());
+			/////
+			pstmt.setString(25, i.getSTAT1NM());
+			pstmt.setInt(26, i.getSTAT1FIG());
+			pstmt.setString(27, i.getSTAT2NM());
+			pstmt.setInt(28, i.getSTAT2FIG());
+			pstmt.setString(29, i.getSTAT3NM());
+			pstmt.setInt(30, i.getSTAT3FIG());
+			pstmt.setString(31, i.getSTAT4NM());
+			pstmt.setInt(32, i.getSTAT4FIG());
+			pstmt.setString(33, i.getSTAT5NM());
+			pstmt.setInt(34, i.getSTAT5FIG());
+
+			// regDate와 Hit은 default 값을 따로 지정 해 두었기 때문에, 따로 쿼리로 안넣어줘도 됨.
+
+			if (pstmt.executeUpdate() == 1) {
+				// 쿼리 실행 성공 시 true
+				result = true;
+			} // 그 외에는 default인 false로.
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBcon.close(pstmt);
+		}
+		return result;
+		// 정리
+	}
+
+	// 아이템 수정
+	public boolean updateItem(Item i) {
+		query = "UPDATE item_info SET itemNm=?, itemScr=?, itemIco=?, itemDes=?, iRarity=?, iCategory=?, iSlot=?, "
+				+ "perkIco1=?, perkName1=?, perkDes1=?, perkIco2=?, perkName2=?, perkDes2=?, perkIco3=?, perkName3=?, perkDes3=?, "
+				+ "perkIco4=?, perkName4=?, perkDes4=?, perkIco5=?, perkName5=?, perkDes5=?, " + "RPM=?, MAGAZINE=?, "
+				+ "STAT1NM=?, STAT1FIG=?, STAT2NM=?, STAT3FIG=?, STAT3NM=?, STAT3FIG=?, STAT4NM=?, STAT4FIG=?, STAT5NM=?, STAT5FIG=?, "
+				+ " WHERE num = ?";
+
+		try {
+			pstmt = DBcon.getConnection().prepareStatement(query);
+			pstmt.setString(1, i.getItemNm());
+			pstmt.setString(2, i.getItemScr());
+			pstmt.setString(3, i.getItemIco());
+			pstmt.setString(4, i.getItemDes());
+			pstmt.setString(5, i.getiRarity());
+			pstmt.setString(6, i.getiCategory());
+			pstmt.setString(7, i.getiSlot());
+			//////
+			pstmt.setString(8, i.getPerkIco1());
+			pstmt.setString(9, i.getPerkName1());
+			pstmt.setString(10, i.getPerkDes1());
+			pstmt.setString(11, i.getPerkIco2());
+			pstmt.setString(12, i.getPerkName2());
+			pstmt.setString(13, i.getPerkDes2());
+			pstmt.setString(14, i.getPerkIco3());
+			pstmt.setString(15, i.getPerkName3());
+			pstmt.setString(16, i.getPerkDes3());
+			pstmt.setString(17, i.getPerkIco4());
+			pstmt.setString(18, i.getPerkName4());
+			pstmt.setString(19, i.getPerkDes4());
+			pstmt.setString(20, i.getPerkIco5());
+			pstmt.setString(21, i.getPerkName5());
+			pstmt.setString(22, i.getPerkDes5());
+			/////
+			pstmt.setInt(23, i.getRPM());
+			pstmt.setInt(24, i.getMAGAZINE());
+			/////
+			pstmt.setString(25, i.getSTAT1NM());
+			pstmt.setInt(26, i.getSTAT1FIG());
+			pstmt.setString(27, i.getSTAT2NM());
+			pstmt.setInt(28, i.getSTAT2FIG());
+			pstmt.setString(29, i.getSTAT3NM());
+			pstmt.setInt(30, i.getSTAT3FIG());
+			pstmt.setString(31, i.getSTAT4NM());
+			pstmt.setInt(32, i.getSTAT4FIG());
+			pstmt.setString(33, i.getSTAT5NM());
+			pstmt.setInt(34, i.getSTAT5FIG());
+			////
+			pstmt.setString(35, i.getItemId());
+
+			// 따라서, executeUpdate 시에는 query를 따로 안받아도 된다.
+			if (pstmt.executeUpdate() == 1) {
+				// 쿼리 실행 성공 시 true
+				result = true;
+			} // 그 외에는 default인 false로.
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBcon.close(pstmt);
+		}
+		return result;
+	}
+
+	// 아이템 삭제
+	public boolean delItem(String itemId) {// 게시물 삭제
+		query = "DELETE item_info WHERE itemId = ?";
+
+		try {
+			pstmt = DBcon.getConnection().prepareStatement(query);
+			pstmt.setString(1, itemId);
+			if (pstmt.executeUpdate() == 1) {
+				// 쿼리 실행 성공 시 true
+				result = true;
+			} // 그 외에는 default인 false로.
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBcon.close(pstmt);
+		}
+		return result;
+	}
+
+	// 아이템 정보보기
+	public Item selectItem(String itemId) {
+		Item temp = null;
+		query = "SELECT * FROM item_info WHERE itemId = ?";
+		try {
+			pstmt = DBcon.getConnection().prepareStatement(query);
+			pstmt.setString(1, itemId);
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) { // 쿼리 실행 성공 시 true
+				temp = new Item();
+
+				temo.setItemId(rs.getString("itemId"));
+				temp.setItemNm(rs.getString("itemnm"));
+				temp.setItemScr(rs.getString("itemScr"));
+				temp.setItemIco(rs.getString("itemIco"));
+				temp.setItemDes(rs.getString("itemDes"));
+				temp.setiRarity(rs.getString("iRarity"));
+				temp.setiCategory(rs.getString("iCategory"));
+				temp.setiSlot(rs.getString("islot"));
+				/////
+				temp.setPerkIco1(rs.getString("perkIco1"));
+				temp.setPerkName1(rs.getString("perkName1"));
+				temp.setPerkDes1(rs.getString("perkDes1"));
+				temp.setPerkIco2(rs.getString("perkIco2"));
+				temp.setPerkName2(rs.getString("perkName2"));
+				temp.setPerkDes2(rs.getString("perkDes2"));
+				temp.setPerkIco3(rs.getString("perkIco3"));
+				temp.setPerkName3(rs.getString("perkName3"));
+				temp.setPerkDes3(rs.getString("perkDes3"));
+				temp.setPerkIco4(rs.getString("perkIco4"));
+				temp.setPerkName4(rs.getString("perkName4"));
+				temp.setPerkDes4(rs.getString("perkDes4"));
+				temp.setPerkIco5(rs.getString("perkIco5"));
+				temp.setPerkName5(rs.getString("perkName5"));
+				temp.setPerkDes5(rs.getString("perkDes5"));
+				/////
+				temp.setRPM(rs.getInt("RPM"));
+				temp.setMAGAZINE(rs.getInt("MAGAZINE"));
+				/////
+				temp.setSTAT1NM(rs.getString("STAT1NM"));
+				temp.setSTAT1FIG(rs.getInt("STAT1FIG"));
+				temp.setSTAT2NM(rs.getString("STAT2NM"));
+				temp.setSTAT2FIG(rs.getInt("STAT2FIG"));
+				temp.setSTAT3NM(rs.getString("STAT3NM"));
+				temp.setSTAT3FIG(rs.getInt("STAT3FIG"));
+				temp.setSTAT4NM(rs.getString("STAT4NM"));
+				temp.setSTAT4FIG(rs.getInt("STAT4FIG"));
+				temp.setSTAT5NM(rs.getString("STAT5NM"));
+				temp.setSTAT5FIG(rs.getInt("STAT5FIG"));
+				/////
+				temp.setRegDate(rs.getDate("regDate"));
+				temp.setGood(rs.getInt("Good"));
+				temp.setBad(rs.getInt("Bad"));
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBcon.close(rs, stmt);
+		}
+		return temp;
+	}
+}

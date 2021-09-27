@@ -1,0 +1,177 @@
+package mini.dao;
+
+//java Import
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+//project Import
+import mini.dto.Member;
+import mini.util.DBcon;
+
+public class MemberDAO {
+	// 멤버 변수
+	private String query; // 쿼리문을 담을 변수
+	private Connection con; // 커넥션. DBcon에서 getConnection으로 받아올거임
+	private PreparedStatement pstmt;
+	private ResultSet rs; // DQL 반환할 ResultSet
+	private boolean result;// 성공여부 체크
+
+	// 관리자 권한 확인
+	public boolean isProperties(String sid) {
+		query = "SELECT properties FROM member WHERE sid=?";
+
+		try {
+			con = DBcon.getConnection();
+
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, sid);
+
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				if() {
+					
+				}else {
+					result=false;
+				}
+						
+				result = (rs.getInt("properties") == 1 ? true : false);
+			}
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return result;
+	}
+
+	// 회원 가입
+	public boolean joinUser(Member member) {// 게시물 등록
+
+		query = "INSERT INTO Member VALUES(?, ?, ?, ?, ?, DEFAULT, DEFAULT)";
+
+		try {
+			con = DBcon.getConnection();
+
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, member.getUserId());
+			pstmt.setString(2, member.getUserPW());
+			pstmt.setString(3, member.getUserNm());
+			pstmt.setString(4, member.getUserEmail());
+			pstmt.setString(5, member.getUserImg());
+
+			// 따라서, executeUpdate 시에는 query를 따로 안받아도 된다.
+			if (pstmt.executeUpdate() == 1) {
+				// 쿼리 실행 성공 시 true
+				result = true;
+			} // 그 외에는 default인 false로.
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBcon.close(pstmt);
+		}
+		return result;
+		// 정리
+	}
+
+	// 로그인
+	public boolean loginUser(String userId, String userPw) {
+		query = "SELECT * FROM member WHERE userId = ? AND userPw = ?";
+
+		try {
+			con = DBcon.getConnection();
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, userId);
+			pstmt.setString(2, userPw);
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) { // 쿼리 실행 성공 시 result = true
+				result = true;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBcon.close(rs, pstmt);
+		}
+
+		return result;
+	}
+
+	// 마이페이지
+	public Member getUserById(String userId) {
+		query = "SELECT * FROM member WHERE userId = ?";
+		Member temp = null;
+		try {
+			con = DBcon.getConnection();
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, userId);
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) { // 쿼리 실행 성공 시 true
+				temp = new Member();
+				temp.setUserId(rs.getString("userId"));
+				temp.setUserNm(rs.getString("userNm"));
+				temp.setUserEmail(rs.getString("userEmail"));
+				temp.setUserImg(rs.getString("userImg"));
+				temp.setRegDate(rs.getDate("regDate"));
+				temp.setProperties(rs.getInt("properties") == 1 ? true : false);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBcon.close(rs, pstmt);
+		}
+		// 게시물 전체 조회
+		return temp;
+	}
+
+	// 회원정보 수정
+	public boolean update(Member member) {// 게시물 수정
+		// System.out.println(member.getPid()); //디버깅용
+		query = "UPDATE member SET userPw = ?, userNm = ?, userEmail = ?, userImage = ?, WHERE userId = ?";
+
+		try {
+			con = DBcon.getConnection();
+
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, member.getUserPW()); // 비번
+			pstmt.setString(2, member.getUserNm()); // 이름
+			pstmt.setString(3, member.getUserEmail()); // 이메일
+			pstmt.setString(4, member.getUserImg()); // 이미지
+			pstmt.setString(5, member.getUserId()); // id
+
+			// 따라서, executeUpdate 시에는 query를 따로 안받아도 된다.
+			if (pstmt.executeUpdate() == 1) {
+				// 쿼리 실행 성공 시 true
+				result = true;
+			} // 그 외에는 default인 false로.
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBcon.close(pstmt);
+		}
+		return result;
+		// 정리
+	}
+
+	// 회원탈퇴
+	public boolean delete(String userId) {// 게시물 삭제
+		query = "DELETE member WHERE userId = ?";
+
+		try {
+			con = DBcon.getConnection();
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, userId);
+			if (pstmt.executeUpdate() == 1) {
+				// 쿼리 실행 성공 시 true
+				result = true;
+			} // 그 외에는 default인 false로.
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBcon.close(pstmt);
+		}
+		return result;
+	}
+}

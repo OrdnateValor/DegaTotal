@@ -1,0 +1,152 @@
+//회원 관련
+
+function addUserChk() {
+	//var email_rule = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+	var userEmail = "";
+	//비밀번호 일치여부 확인
+	if ($('#userPw').val() != $('#pwConfirm').val()) {
+		alert('비밀번호가 일치하지 않습니다!');
+		$('#pwConfirm').focus;
+		return false;
+	}
+	//이메일 합치기
+	if (!$('#emailId').val()) {
+		alert("이메일을 입력해 주세요")
+		$('#emailId').focus;
+		return false;
+	}
+	if (!$('#Domain').val()) {
+		alert("도메인을 선택해 주세요")
+		$('#Domain').focus;
+		return false;
+	}
+	userEmail = $('#emailId').val() + $('#Domain').val();
+	$('#userEmail').val(userEmail);
+	//비밀번호가 일치하고 이메일 합치기가 완료되면 폼 전송
+	$('form').submit();
+}
+
+function upUserChk() {
+	//비밀번호 일치여부 확인
+	if ($('#userPw').val() != $('#pwConfirm').val()) {
+		alert('비밀번호가 일치하지 않습니다!');
+		$('#pwConfirm').focus;
+		return false;
+	}
+	//폼 전송
+	$('form').submit();
+}
+
+function logout() {
+	if (confirm("로그아웃하시겠습니까?")) {
+		location.href = "/Member/userLogout.jsp";
+	}
+}
+
+function delUserChk(userId) {
+	//회원탈퇴 의사 확인
+	if (confirm("정말 탈퇴하시겠습니까?")) {
+		location.href = "/Member/userDelete.jsp?userId=" + userId;
+	}
+}
+
+//아이템 DB관련
+
+function delItemChk(itemId) {
+	//아이템 삭제 확인
+	if (confirm("정말 삭제하시겠습니까?")) {
+		location.href = "/itemDel.do?itemId=" + itemId;
+	}
+}
+
+function modItemChk() {
+	//아이템 수정 확인
+	if (confirm("이대로 수정하시겠습니까?")) {
+		$('form').submit();
+	}
+}
+
+function addItemChk() {
+	//아이템 추가 확인
+	if (confirm("이대로 게시하시겠습니까?")) {
+		$('form').submit();
+	}
+}
+
+//코멘트 관련
+function commentChk() {
+	if (!$('#userCmt').val()) {
+		alert('내용을 입력하세요');
+		$('#userCmt').focus;
+	}
+	else if (!$('#userId').val()) {
+		alert('로그인이 필요한 서비스입니다.');
+		location.href="/Member/loginUser.jsp";
+	}
+	else if (!$('#postId').val()) {
+		alert('비정상적인 접근입니다.');
+		location.href="/itemList.do";
+	}
+	else {
+		/*
+		var userCmt = $('#userCmt').val();
+		var userNm = $('#userNm').val();
+		var userId = $('#userId').val();
+		var postId = $('#postId').val();*/
+		
+		/*
+		console.log('댓글 입력 성공');
+		console.log('내용 : ' + userCmt);
+		console.log('작성자 : ' + userId);
+		console.log('닉네임 : ' + userNm);
+		console.log('게시물번호 : ' + postId);*/
+		
+		
+		$('form').submit();	
+	}
+}
+
+function cmtDelChk(cmtNum,itemId){
+	//코멘트 삭제 확인
+	if (confirm("댓글을 지우시겠습니까?")) {
+		location.href = "/delCmt.do?cmtNum=" + cmtNum+"&itemId="+itemId;
+	}
+}
+
+//게시물 관련
+function addPostChk(){
+	//등록 전 체크
+	if(!$('#postSub').val()){
+		alert('제목을 입력 해 주세요');
+		return false;
+	}
+	if(confirm("현재 내용으로 등록하시겠습니까?")){
+		
+			$('form').submit();
+	}
+	//값 가져오기
+			var Content = $('#content').summernote('code'); //썸머노트(설명)
+	console.log("postThumb : '" + $('#postThumb').val()+"'");
+	console.log("postSub : '" + $('#postSub').val()+"'");
+	console.log("Content : '" + Content+"'");
+	//
+}
+
+function modPostChk() {
+	//게시글 수정 확인
+	if(!$('#postSub').val()){
+		alert('제목을 입력 해 주세요');
+		return false;
+	}
+	
+	if (confirm("이대로 수정하시겠습니까?")) {
+		$('form').submit();
+	}
+}
+
+function delPostChk(postId){
+	//게시물 삭제 체크
+	if (confirm("정말 삭제하시겠습니까?")) {
+		location.href = "/postDel.do?postId=" + postId;
+	}
+}

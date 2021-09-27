@@ -1,0 +1,126 @@
+<%@page import="java.text.SimpleDateFormat"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<sql:setDataSource var="dataSource" driver="oracle.jdbc.OracleDriver"
+	url="jdbc:oracle:thin:@localhost:1521:xe" user="mini" password="3939" />
+<%@include file="../include/header.jsp"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>MyPage</title>
+<style>
+input[type="file"] {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	border: 0;
+}
+</style>
+</head>
+<body style="background: #E9ECEF; height: 100%; width: 100%;">
+	<%
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	%>
+
+	<div class="jumbotron">
+		<h3 class="display-4">유저 등록</h3>
+		<hr>
+	</div>
+
+	<div class="container">
+		<!-- 필수 입력 항목 안내 메시지 -->
+		<c:set var="idMsg" value="아이디는 필수 입력 항목입니다." />
+		<c:set var="pwMsg" value="비밀번호는 필수 입력 항목입니다." />
+		<c:set var="pwcMsg" value="비밀번호가 올바르지 않습니다." />
+		<c:set var="nmMsg" value="유저명은 필수 입력 항목입니다." />
+		<form name="newUser" action="userJoinProc.jsp"
+			class="form-horizontal" method="post" id="userJoinForm">
+			<!-- 이미지 선택시 변경되게 -->
+			<div class="form-group col-md-3">
+				<img src="/resources/imgs/Profile_default.png"
+					style="width: 100%; border: 1px solid black;">
+				<div>
+					<label for="userImg" class="btn btn-sm btn-success btn-block">파일
+						선택</label> <input type="file" name="userImg" id="userImg"
+						accept="image/*">
+				</div>
+			</div>
+			<div class="form-group row">
+				<label class="col-sm-2">아이디</label>
+				<div class="col-sm-3">
+					<input type="text" name="userId" id="userId" class="form-control"
+						placeholder="대소문자,숫자, 8자 이상">
+						<!-- TODO: 아이디 중복체크 구현 -->
+						 <!-- <input type="button"
+						value="중복확인" onclick="userIdChk()"> <input type="hidden"
+						name="idDupl" value="idUncheck"> -->
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-sm-2">비밀번호</label>
+				<div class="col-sm-4">
+					<input type="password" name="userPw" id="userPw"
+						class="form-control" placeholder='문자+숫자+특수문자 8자리 이상' required
+						oninput="setCustomValidity('')"
+						oninvalid="this.setCustomValidity('${pwMsg }')">
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-sm-2">비밀번호 확인</label>
+				<div class="col-sm-4">
+					<input type="password" name="pwConfirm" id="pwConfirm"
+						class="form-control" placeholder='비밀번호 재입력' required
+						oninput="setCustomValidity('')"
+						oninvalid="this.setCustomValidity('${pwcMsg }')">
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-sm-2">유저명</label>
+				<div class="col-sm-3">
+					<input type="text" name="userNm" id="userNm" class="form-control">
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<label class="col-sm-2">이메일</label>
+				<div class="col-sm-3">
+					<input type="hidden" name="userEmail" id="userEmail">
+					<input type="text" name="emailId" id="emailId" class="form-control">
+				</div>
+				<!-- TODO: select 이쁘게 만들기 -->
+				<div>
+					<select class="form-select" aria-label="Default select example" name="Domain" id="Domain" form="userJoinForm">
+						<option value="">----선택----</option>
+						<option value="@naver.com">@naver.com</option>
+						<option value="@gmail.com">@gmail.com</option>
+						<option value="@hanmail.net">@hanmail.net</option>
+						<option value="@hotmail.com">@hotmail.com</option>
+						<option value="@korea.com">@korea.com</option>
+						<option value="@nate.com">@nate.com</option>
+						<option value="@yahoo.com">@yahoo.com</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<div class="com-sm-offset-2 col-sm-10">
+					<input type="button" class="btn btn-primary" value="등록"
+						onclick="return addUserChk()"> <a
+						class="btn btn-secondary" href="/main.jsp">취소</a>
+				</div>
+			</div>
+		</form>
+	</div>
+	<%@include file="../include/footer.jsp"%>
+</body>
+</html>

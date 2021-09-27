@@ -1,0 +1,73 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@  page import="java.util.*"%>
+<%@ page import="mini.dto.Item"%>
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>아이템 목록</title>
+<%@include file="../include/header.jsp"%>
+</head>
+<body style="background: #E9ECEF; height: 100%; width: 100%;">
+	<!-- msg 값이 있는 경우, alert로 msg 출력 -->
+	<c:if test="${msg != null }">
+		<script>
+			alert('${msg}');
+		</script>
+		<%
+		session.removeAttribute("msg");
+		%>
+	</c:if>
+	<div class="jumbotron">
+		<div class="container">
+			<div class="col-sm">
+				<h2>아이템 DB</h2>
+				<%
+				//콘솔 출력용 코드
+				//System.out.println("admin : "+request.getParameter("admin"));
+				%>
+				<c:if test="${param.admin eq 1 }">
+					<a type="button" class="btn btn-primary btn-sm col-sm-2" href="#">아이템
+						정보 수정</a>
+				</c:if>
+			</div>
+			<hr>
+			<div style="margin-top: 3rem; margin-bottom: 3rem">
+				<div class="row justify-content-left">
+					<c:choose>
+						<c:when test="${empty itemList }">
+							조회 가능한 아이템이 없습니다.
+							<c:out value="${itemList }" />
+						</c:when>
+						<c:otherwise>
+							<c:forEach items="${itemList }" var="item">
+								<div class="card" style="width: 5rem;">
+									<img class="card-img-top"
+										src="/resources/imgs/ico/${item.itemIco }" alt="itemIco">
+									<div class="card-body">
+										<h5 class="card-title">${item.itemNm }</h5>
+										<p class="card-text">Some quick example text to build on
+											the card title and make up the bulk of the card's content.</p>
+										<a href="/itemInfo.do" class="btn btn-dark">상세보기>></a>
+									</div>
+								</div>
+								<div class="card col-sm-2" style="width: 5em;">
+									<img class="card-img-top" src="" alt="itemIco"
+										style="margin-top: 1rem;">
+									<div
+										style="margin-top: 1rem; margin-bottom: 1rem; text-align: center;">
+										<a href="" class="light"> </a>
+									</div>
+								</div>
+							</c:forEach>
+						</c:otherwise>
+					</c:choose>
+				</div>
+			</div>
+		</div>
+	</div>
+	<%@include file="/include/footer.jsp"%>
+</body>
+</html>

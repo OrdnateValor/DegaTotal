@@ -1,0 +1,59 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ page import="mini.dto.Post"%>
+<%@include file="../include/header.jsp"%>
+<!DOCTYPE html>
+<html>
+<head>
+<title>게시물 작성</title>
+<script>
+	
+	//게시물 내용 html 형태 그대로 출력
+	$(document).ready(function(){
+		function escapeHtml(string) {
+			return String(string).replace(/[&<>"'`=\/]/g, function(s) {
+				return entityMap[s];
+			});
+		}
+		var content = escapeHtml(${post.content});
+		$('#loaded_content').html(content);
+	})
+</script>
+<body style="background: #E9ECEF; height: 100%; width: 100%;">
+	<div class="jumbotron">
+		<div class="container">
+			<div class="col-xl-10 row">
+				<div>
+					<h2>
+						<strong>${post.postSub }</strong>
+					</h2>
+					<c:if test="${Admin eq 'true' }">
+						<div>
+							<a class="btn btn-primary btn-sm" href="/postMod.do?postId=${post.postId }">편집</a>
+							<a class="btn btn-danger btn-sm" href="javascript:delPostChk('${post.postId }')">삭제</a>
+						</div>
+					</c:if>
+				</div>
+			</div>
+			<hr>
+			<div class="container">
+				<div id="post_img">
+					<img alt="post_thumnail" src="/resources/imgs/post/${post.postThumb }">
+				</div>
+				<div class="form-group row">
+					<div class="col-xl-12">
+						<div id="loaded_content"></div>			
+					</div>
+				</div>
+	
+				<div class="form-group row">
+					<div class="com-xl-offset-2 col-xl-12" align="right">
+						<a href="/postList.do" type="button" class="btn btn-dark">목록</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<%@include file="../include/footer.jsp"%>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%-- <%@include file="../include/header.jsp"%>
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"> --%>
+<link rel="stylesheet" type="text/css" href="../include/OVStyle.css">
+<script src="/resources/script.js"></script>
+<c:if test="${totalCmt != null }">
+	<div class="container">
+		<hr>
+		<div class="comment-box">
+			<c:choose>
+			<c:when test="${cmtLoadErr != null }"><div class="need-login">${cmtLoadErr}</div></c:when>
+				<c:otherwise>
+					<c:forEach items="${cmtList }" var="cmt">
+						<hr>
+						<div class="d-flex row justify-content-around align-items-center">
+							<input type="text" class="comment-user-box align-self-start col-xl-2" value="${cmt.userNm }" disabled="disabled">
+							<input type="hidden" name="userId" id="userId" value="${cmt.userId }" readonly="readonly">
+							<textarea class="col-xl-6" name="userCmt" id="userCmt" rows="3" style="resize: none;" readonly="readonly">${cmt.userCmt }</textarea>
+							<div class="align-items-center">
+								<p>등록일 : ${cmt.regDate }</p>
+								<c:if test="${sid == cmt.userId || Admin == true }">
+								<p>
+									<a class="btn btn-danger" href="javascript:void(0);" onclick="commentDelChk(${cmt.cmtNum });">삭제</a>
+								</p>
+								</c:if>
+							</div>
+						</div>
+					</c:forEach>
+				</c:otherwise>
+			</c:choose>
+		</div>
+		<input type="hidden" name="postId" id="postId" value="${item.itemId }">
+		<input type="hidden" name="cmtNum" id="cmtNum" value="${cmt.cmtNum }">
+	</div>
+</c:if>

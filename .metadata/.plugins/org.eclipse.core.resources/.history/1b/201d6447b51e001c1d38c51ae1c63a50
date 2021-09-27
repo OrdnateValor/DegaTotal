@@ -1,0 +1,112 @@
+@charset "UTF-8";
+
+textarea {
+	resize: none
+}
+
+body {
+	background: #E9ECEF;
+	height: 100%;
+	width: 100%;
+}
+
+.ico {
+	margin-left: 1rem;
+	margin-right: 1rem;
+	background: #343a40;
+	border-radius: 70px;
+}
+
+.perk_set {
+	border-collapse: separate;
+	border-spacing: 0 1rem;
+}
+
+.perk_Ico {
+	width: 20%;
+}
+
+.item_perk {
+	width: 80%;
+	color: white;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
+	background: #343a40;
+	border-radius: 10px;
+}
+
+.item_perk textarea {
+	padding: 1px;
+	width: 35rem;
+}
+
+.item_perk input {
+	width: 10rem;
+}
+
+select {
+	text-align: center;
+	width: 8rem;
+}
+
+.statNm {
+	width: 30%
+}
+
+.statNm input {
+	width: 8rem;
+}
+
+.comment-box {
+	padding: 1rem;
+	width: 90%;
+	border: 1px solid black;
+	background: #6c757d;
+	margin:auto;
+}
+
+.comment-box .btn{
+	height: 2.5rem;
+}
+
+.comment-input-box {
+	resize: none; 
+	border: 1px solid black;
+	width: 30rem;
+}
+
+.comment-output-box {
+	resize: none; 
+	width: 30rem;
+	background: #E9ECEF;
+}
+
+.comment-user-box{
+	padding-right:1rem;
+	padding-left:1rem;	
+	width: 10rem;
+	height: 2rem;
+	border: 1px solid black;
+	border-radius: 5px;
+	background: secondary;
+	text-align: center;
+	background: #343a40;
+	color: white;
+	font-weight: bold;
+}
+
+.need-login{
+	color: white;
+	font-weight: bold;
+}
+
+#thumb img{
+	width: 10rem;
+}
+
+#post_img img{
+	max-width: 100%;
+	height: auto;
+}

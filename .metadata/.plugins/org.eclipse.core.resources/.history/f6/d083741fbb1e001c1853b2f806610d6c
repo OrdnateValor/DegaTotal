@@ -1,0 +1,134 @@
+package mini.dao;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import mini.dto.Post;
+import mini.util.DBcon;
+
+public class PostDAO {
+	private String query;
+	private PreparedStatement pstmt;
+	private boolean result;
+	private ResultSet rs;
+
+	// Post 목록
+	public List<Post> selectPostList() {
+		query = "SELECT postId, postThumb, postSub, regDate FROM dega_post ORDER BY DESC";
+		List<Post> tempList = new ArrayList<Post>();
+
+		try {
+			pstmt = DBcon.getConnection().prepareStatement(query);
+
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				Post temp = new Post();
+
+				temp.setPostId(rs.getInt("postId")); // 게시물 번호
+				temp.setPostThumb(rs.getString("postThumb")); //섬네일
+				temp.setPostSub(rs.getString("postSub")); // 제목
+				//temp.setContent(rs.getString("content")); // 내용물
+				temp.setRegDate(rs.getDate("regDate")); // 작성일
+
+				tempList.add(temp);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBcon.close(rs, pstmt);
+		}
+		return tempList;
+	}
+
+	// Post 등록
+	public boolean addPost(Post post) {
+		query = "INSERT INTO dega_post VALUES(dega_post_seq.NEXTVAL,?, ?, ?, DEFAULT)"; // 썸네일, 제목, 내용물
+		try {
+			pstmt = DBcon.getConnection().prepareStatement(query);
+			//게시글 내용이 많을 수 있기 때문에, 2000byte 이상의 장문의 데이터를 스트림형태로 변환시켜서 넣어줄 것임.
+			String contentStream = post.getContent();
+			pstmt.setString(1, post.getPostThumb());
+			pstmt.setString(2, post.getPostSub());
+			pstmt.setString(3, post.getContent());
+
+			if (pstmt.executeUpdate() == 1) {// 쿼리 실행 성공 시
+				result = true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBcon.close(pstmt);
+		}
+		return result;
+	}
+
+	// 게시물 수정
+	public boolean updatePost(Post post) {
+
+		query = "UPDATE dega_post SET postThumb = ?, postSub = ?, content = ? WHERE postId = ?";
+
+		try {
+			pstmt = DBcon.getConnection().prepareStatement(query);
+			pstmt.setString(1, post.getPostThumb());
+			pstmt.setString(2, post.getPostSub());
+			pstmt.setString(3, post.getContent());
+			pstmt.setInt(4, post.getPostId());
+
+			if (pstmt.executeUpdate() == 1) {// 성공 시
+				result = true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBcon.close();
+		}
+		return result;
+	}
+
+	// post 세부조회
+	public Post selectPost(int postId) {
+		Post temp = null;
+		query = "SELECT * FROM dega_post WHERE postId = ?";
+		try {
+			pstmt = DBcon.getConnection().prepareStatement(query);
+			pstmt.setInt(1, postId);
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				temp = new Post();
+				temp.setPostId(postId);
+				temp.setPostThumb(rs.getString("postThumb"));
+				temp.setPostSub(rs.getString("postSub"));
+				temp.setContent(rs.getString("content"));
+				temp.setRegDate(rs.getDate("regDate"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBcon.close(rs, pstmt);
+		}
+		return temp;
+	}
+
+	// post 삭제
+	public boolean delPost(int postId) {
+		query = "DELETE dega_post WHERE postId = ?";
+		try {
+			pstmt = DBcon.getConnection().prepareStatement(query);
+			pstmt.setInt(1, postId);
+			if (pstmt.executeUpdate() == 1) {
+				// 쿼리 실행 성공 시 true
+				result = true;
+			} // 그 외에는 default인 false로.
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBcon.close(pstmt);
+		}
+		return result;
+	}
+}

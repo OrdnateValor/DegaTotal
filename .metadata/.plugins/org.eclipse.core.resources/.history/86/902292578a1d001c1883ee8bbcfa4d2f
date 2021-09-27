@@ -1,0 +1,70 @@
+package mini.controller;
+
+import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import mini.dao.CommentDAO;
+import mini.dto.Comment;
+
+/**
+ * Servlet implementation class CommentController
+ */
+@WebServlet("*.do")
+public class CommentController extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	private HttpSession session;
+	private CommentDAO cdao;
+	private String url;
+	private boolean result;
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doPost(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		request.setCharacterEncoding("UTF-8"); // 한글 처리
+		response.setContentType("text/html; charset=UTF-8"); // 인코딩
+
+		session = request.getSession();
+		String requestURI = request.getRequestURI();
+		// System.out.println("requestURI:" + requestURI);
+		String contextPath = request.getContextPath();
+		String cmd = requestURI.substring(contextPath.length());
+		cdao = new CommentDAO();
+
+		switch (cmd) {
+		case "/addCmt.do":
+			addCmt(request);
+			response.sendRedirect(url);
+			return;
+		}
+
+		RequestDispatcher rd = request.getRequestDispatcher(url);
+		rd.forward(request, response);
+
+	}
+
+	private void addCmt(HttpServletRequest request) {
+		Comment cmt = new Comment(request);
+		result = cdao.addCmt(cmt);
+		if (result != false) {
+			session.setAttribute("msg", "아이템 등록 성공");
+		} else {
+			session.setAttribute("msg", "아이템 등록 실패");
+		}
+		url = "/itemInfo/itemMod.jsp?itemId=" + request.getParameter("postId");
+
+	}
+
+}

@@ -1,0 +1,25 @@
+1632139771999	Move 'footerex.jsp' to 'include'
+1632139891042	Delete element
+1632161802932	Rename resource 'LoginUser.jsp'
+1632168883486	Rename resource 'logoutUser.jsp'
+1632169471183	Rename resource 'OVscript.js'
+1632172705086	Rename resource 'Mypage.jsp'
+1632184093370	Copy file
+1632325756649	Rename resource 'itemDB'
+1632329666123	Copy compilation unit
+1632330223216	Rename type 'ItemDao'
+1632334494706	Delete element
+1632336984194	Rename resource 'Ico'
+1632359430403	Delete element
+1632508464961	Rename resource 'comment.jsp'
+1632522606903	Delete element
+1632522631575	Delete element
+1632522984237	Rename type 'comment'
+1632523844739	Rename package 'mini.contoller'
+1632524495978	Delete element
+1632524654065	Delete element
+1632525033463	Copy compilation unit
+1632525088230	Delete element
+1632525177494	Copy compilation unit
+1632525266149	Delete element
+1632525275974	Rename type 'ItemController'

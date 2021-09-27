@@ -1,0 +1,72 @@
+CREATE TABLE member(
+	userId			VARCHAR2(20) PRIMARY KEY,	 -- 유저ID, 기본키
+	userPw			VARCHAR2(20) NOT NULL,		 -- 유저 PW, 필수
+	userNm			VARCHAR2(20),				 -- 유저 이름(닉네임) 입력 안해도 상관없음.
+	userEmail		VARCHAR2(30) NOT NULL,		 -- 유저 이메일, 필수
+	userImg			VARCHAR2(20),				 -- 유저 사진(프로필사진)
+	properties		CHAR(1)		 DEFAULT 0,		 -- 유저의 관리자 권한. 기본값 0
+	regDate			DATE		 DEFAULT SYSDATE
+);
+
+CREATE SEQUENCE member_seq NOCACHE;
+
+CREATE TABLE item_info(
+	itemId			VARCHAR2(20) PRIMARY KEY,	 -- 아이템 ID, 기본키
+	itemNm			VARCHAR2(20) NOT NULL,	 	 -- 아이템 이름
+	itemScr			VARCHAR2(20),				 -- 아이템 스크린샷
+	itemIco			VARCHAR2(20),				 -- 아이템 아이콘
+	itemDes			VARCHAR2(1000),				 -- 아이템 설명
+	iRarity			VARCHAR2(20),				 -- 아이템 희귀도(등급)
+	iCategory		VARCHAR2(20),				 -- 아이템 분류
+	iSlot			VARCHAR2(20),				 -- 아이템 유형(물리, 에너지, 중화기)
+	perkIco1		VARCHAR2(20),				 -- 퍽 아이콘 1
+	perkName1		VARCHAR2(20),				 -- 퍽 이름 1
+	perkDes1		VARCHAR2(100),				 -- 퍽 설명 1
+	perkIco2		VARCHAR2(20),				 -- 퍽 아이콘 2
+	perkName2		VARCHAR2(20),				 -- 퍽 이름 2
+	perkDes2		VARCHAR2(100),				 -- 퍽 설명 2
+	perkIco3		VARCHAR2(20),				 -- 퍽 아이콘 3
+	perkName3		VARCHAR2(20),				 -- 퍽 이름 3
+	perkDes3		VARCHAR2(100),				 -- 퍽 설명 3
+	perkIco4		VARCHAR2(20),				 -- 퍽 아이콘 4
+	perkName4		VARCHAR2(20),				 -- 퍽 이름 4
+	perkDes4		VARCHAR2(100),				 -- 퍽 설명 4
+	perkIco5		VARCHAR2(20),				 -- 퍽 아이콘 5
+	perkName5		VARCHAR2(20),				 -- 퍽 이름 5
+	perkDes5		VARCHAR2(100),				 -- 퍽 설명 5
+	RPM				NUMBER,						 -- 분당 발사수
+	MAGAZINE		NUMBER,						 -- 탄창
+	STAT1NM			VARCHAR2(20),				 -- 스탯1 이름
+	STAT1FIG		NUMBER,						 -- 스탯1 수치
+	STAT2NM			VARCHAR2(20),				 -- 스탯2 이름
+	STAT2FIG		NUMBER,						 -- 스탯2 수치
+	STAT3NM			VARCHAR2(20),				 -- 스탯3 이름
+	STAT3FIG		NUMBER,						 -- 스탯3 수치
+	STAT4NM			VARCHAR2(20),				 -- 스탯4 이름
+	STAT4FIG		NUMBER,						 -- 스탯4 수치
+	STAT5NM			VARCHAR2(20),				 -- 스탯5 이름
+	STAT5FIG		NUMBER,						 -- 스탯5 수치
+	regDate			DATE		 DEFAULT SYSDATE
+);
+
+CREATE SEQUENCE item_info_seq NOCACHE;
+
+CREATE TABLE dega_post(
+	postId		NUMBER PRIMARY KEY,				 -- 게시물 번호
+	regDate		DATE	DEFAULT SYSDATE
+);
+
+CREATE SEQUENCE dega_post_seq NOCACHE;
+
+CREATE TABLE t_comment(
+	userId			VARCHAR2(20) REFERENCES member(userid),
+	userComm		VARCHAR2(1000) NOT NULL,
+	postId			VARCHAR2 REFERENCES dega_post(postid),
+	regDate			DATE		 DEFAULT SYSDATE
+);
+
+DROP TABLE t_comment;
+
+CREATE SEQUENCE t_comment_seq NOCACHE;
+
+INSERT INTO item_info(itemid, itemnm, itemscr, itemico, itemdes) VALUES ('I' || item_info_seq.NEXTVAL, '스페이드에이스', 'spadepce_scr.jpg', 'spadeace_ico.jpg', '"원래부터 접을 순 없었다구." -케이드-6');

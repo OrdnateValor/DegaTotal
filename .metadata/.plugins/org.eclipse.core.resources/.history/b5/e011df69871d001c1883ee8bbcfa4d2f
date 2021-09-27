@@ -1,0 +1,12 @@
+package mini.dto;
+
+import java.io.Serializable;
+
+public class comment implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
+	private int cmtNum;
+	private String userId;
+	private String userCmt;
+	
+}

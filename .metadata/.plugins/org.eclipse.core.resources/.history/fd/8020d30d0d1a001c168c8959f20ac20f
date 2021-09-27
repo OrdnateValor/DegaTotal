@@ -1,0 +1,14 @@
+<style>
+a {
+	color: white !important;
+}
+</style>
+<footer class='navbar navbar-dark bg-secondary'>
+	<div class="container">
+		<hr color="white">
+	<a class="nav-item nav-link"
+			href="https://www.bungie.net/7/ko/User/Profile/254/19164972/OrnateValor">Contact
+				us</a>
+		&copy; OrnateValor
+	</div>
+</footer>

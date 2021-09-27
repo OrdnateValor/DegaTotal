@@ -1,0 +1,23 @@
+INDEX VERSION 1.131
+C:\Users\paeks\DegaTotal\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\2911770232.index
+\mini\src\main\java
+C:\Users\paeks\DegaTotal\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\1506535917.index
+\mini\src\main\java
+C:\Users\paeks\DegaTotal\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\3783305745.index
+\mini\src\main\java
+C:\Users\paeks\DegaTotal\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\4193863379.index
+\mini\src\main\java
+C:\Users\paeks\DegaTotal\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\386518806.index
+\mini\src\main\java
+C:\Users\paeks\DegaTotal\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\3074121768.index
+\mini\src\main\java
+C:\Users\paeks\DegaTotal\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\1685255001.index
+\mini\src\main\java
+C:\Users\paeks\DegaTotal\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\2717842173.index
+\mini\src\main\java
+C:\Users\paeks\DegaTotal\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\2433740238.index
+\mini\src\main\java
+C:\Users\paeks\DegaTotal\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\1528037660.index
+\mini\src\main\java
+C:\Users\paeks\DegaTotal\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\3217899515.index
+\mini\src\main\java
